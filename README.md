@@ -5,12 +5,6 @@ The pipeline supports both **full-refresh** and **incremental** data loads, and 
 
 ---
 
-Excellent — that’s a great start 👏
-
-Here’s a **beautified and GitHub-optimized version** of your **Table of Contents**, formatted for clarity, consistent indentation, and clickable Markdown links that work perfectly on GitHub or VS Code preview:
-
----
-
 ## Table of Contents
 
 1. [Project Overview](#project-overview)  
