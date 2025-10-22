@@ -17,9 +17,8 @@ from dotenv import load_dotenv
 import pyarrow.parquet as pq
 import pyarrow.csv as pc
 
-# ------------------------------------------------------------------------------
 # Configuration
-# ------------------------------------------------------------------------------
+
 YEAR = 2024
 DATA_DIR = Path("data")
 COMBINED_CSV_PATH = DATA_DIR / f"yellow_tripdata_{YEAR}.csv"

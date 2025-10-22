@@ -32,23 +32,23 @@ SQL_DIR = Path(os.getenv("SQL_DIR", "sql"))
 
 PG_USER = os.getenv("PG_USER")
 PG_PASSWORD = os.getenv("PG_PASSWORD")
-PG_HOST = os.getenv("PG_HOST", "localhost")
-PG_PORT = os.getenv("PG_PORT", "5432")
+PG_HOST = os.getenv("PG_HOST")
+PG_PORT = os.getenv("PG_PORT")
 PG_DATABASE = os.getenv("PG_DATABASE")
 
-RAW_TABLE = os.getenv("RAW_TABLE", "raw_taxi_data_2024")
-SILVER_TABLE = os.getenv("SILVER_TABLE", "silver_taxi_data_2024")
-GOLD_TABLE = os.getenv("GOLD_TABLE", "gold_taxi_summary_2024")
+RAW_TABLE = os.getenv("RAW_TABLE")
+SILVER_TABLE = os.getenv("SILVER_TABLE")
+GOLD_TABLE = os.getenv("GOLD_TABLE")
 
 # Pipeline metadata table to track incremental month loads
-PIPELINE_METADATA = os.getenv("PIPELINE_METADATA", "pipeline_metadata")
+PIPELINE_METADATA = os.getenv("PIPELINE_METADATA")
 
 # Whether to delete monthly parquet after successful load to save disk
 DELETE_PARQUET_AFTER_LOAD = os.getenv("DELETE_PARQUET_AFTER_LOAD", "false").lower() in ("1", "true", "yes")
 
-# -------------------------------------------------------------------------
+
 # LOGGING
-# -------------------------------------------------------------------------
+
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
     format="%(asctime)s | %(levelname)s | %(message)s",
@@ -56,9 +56,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# -------------------------------------------------------------------------
+
 # DB helper
-# -------------------------------------------------------------------------
+
 def get_db_conn():
     """
     Return a new psycopg2 connection using env vars.
@@ -72,9 +72,9 @@ def get_db_conn():
         dbname=PG_DATABASE
     )
 
-# -------------------------------------------------------------------------
+
 # SQL runner
-# -------------------------------------------------------------------------
+
 def run_sql_file(file_path: Path) -> None:
     """
     Execute SQL file against the DB. Raises FileNotFoundError if missing.
@@ -93,9 +93,9 @@ def run_sql_file(file_path: Path) -> None:
         logger.error("Error executing SQL %s: %s", file_path.name, exc, exc_info=True)
         raise
 
-# -------------------------------------------------------------------------
+
 # Parquet download + merge (existing)
-# -------------------------------------------------------------------------
+
 def download_parquet(url: str, dest_path: Path, timeout: int = 60) -> bool:
     """
     Download Parquet file to dest_path if missing.
@@ -151,9 +151,9 @@ def merge_parquet_files_to_csv(output_csv_path: Path, year: int = YEAR) -> None:
         logger.error("Error merging parquet files: %s", exc, exc_info=True)
         raise
 
-# -------------------------------------------------------------------------
+
 # CSV / DB counting helpers
-# -------------------------------------------------------------------------
+
 def get_csv_row_count(csv_path: Path) -> int:
     """
     Count rows in CSV excluding header. Returns 0 if missing or error.
@@ -208,9 +208,9 @@ def get_silver_max_pickup() -> Optional[str]:
         logger.warning("Could not fetch silver max pickup: %s", exc, exc_info=True)
         return None
 
-# -------------------------------------------------------------------------
+
 # Metadata table for incremental loads
-# -------------------------------------------------------------------------
+
 def ensure_pipeline_metadata_table():
     """
     Create pipeline_metadata table if not exists.
@@ -299,14 +299,15 @@ def load_parquet_month_to_raw_inmemory(parquet_path: Path, table_name: str = RAW
 
         # Wrap as text stream for psycopg2 (copy_expert expects a file-like text object)
         text_stream = io.TextIOWrapper(bio, encoding="utf-8")
+
         # Important: seek to start of text_stream as well
         text_stream.seek(0)
 
         # Perform COPY FROM STDIN
         with get_db_conn() as conn:
             with conn.cursor() as cur:
-                # If you want to append, remove TRUNCATE. For incremental we append.
-                # Here we simply COPY into raw table (append)
+
+                # COPY into raw table (append)
                 copy_sql = f"""
                     COPY {table_name}
                     FROM STDIN
@@ -314,9 +315,9 @@ def load_parquet_month_to_raw_inmemory(parquet_path: Path, table_name: str = RAW
                 """
                 cur.copy_expert(copy_sql, text_stream)
             conn.commit()
-        logger.info("✅ In-memory load complete for %s", parquet_path.name)
+        logger.info("In-memory load complete for %s", parquet_path.name)
     except Exception as exc:
-        logger.error("❌ In-memory load failed for %s: %s", parquet_path.name, exc, exc_info=True)
+        logger.error("In-memory load failed for %s: %s", parquet_path.name, exc, exc_info=True)
         raise
     finally:
         try:

@@ -140,7 +140,7 @@ The pipeline was designed around the following principles:
 
 ## Pipeline Flow
 
-![Pipeline Diagram](assets/ETL.png)
+![Pipeline Diagram](assets/ETL%20Diagram.drawio.svg)
 
 1. **Extract:** Download monthly Parquet files from NYC TLC open data.  
 2. **Load:** Stream CSVs or Parquet data into PostgreSQL (`raw_taxi_data_2024`).  

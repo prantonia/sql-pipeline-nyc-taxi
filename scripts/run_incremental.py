@@ -87,7 +87,7 @@ def run_incremental_one_month(delete_parquet_after: bool = False):
         logger.error("Error loading month %s into raw: %s", next_month, exc, exc_info=True)
         raise
 
-    # run silver transform and gold aggregation (they should handle incremental upsert logic)
+    # run silver transform and gold aggregation, to handle incremental upsert logic
     try:
         logger.info("Running transform_silver.sql (incremental step)")
         run_sql_file(SQL_DIR / "transform_silver.sql")
