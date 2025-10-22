@@ -1,10 +1,10 @@
 """
 NYC Taxi Data Pipeline (Idempotent Full Refresh)
 ------------------------------------------------
-1️⃣ Download monthly Parquet files for 2024 (if missing)
-2️⃣ Merge them into one CSV (if missing)
-3️⃣ Verify raw table and load only if counts differ
-4️⃣ Run Silver and Gold SQL transformations
+Download monthly Parquet files for 2024 (if missing)
+Merge them into one CSV (if missing)
+Verify raw table and load only if counts differ
+Run Silver and Gold SQL transformations
 """
 
 import os

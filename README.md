@@ -37,28 +37,30 @@ The design mirrors modern **data warehouse architecture**:
 
 ```bash
 sql_pipeline/
-├── data/                              # Local cache for Parquet/CSV files
+├── data/                              # Temporary local data storage (ignored in .gitignore)
 │   ├── yellow_tripdata_2024-01.parquet
 │   └── yellow_tripdata_2024.csv
 │
-├── sql/                               # SQL transformation scripts
-│   ├── create_raw_table.sql           # Raw table DDL
-│   ├── transform_silver.sql           # Cleansing logic
-│   └── aggregate_gold.sql             # Aggregation logic
+├── sql/                               # SQL transformation scripts (core of pipeline logic)
+│   ├── create_raw_table.sql           # Raw table DDL schema
+│   ├── transform_silver.sql           # Cleansing, filtering, standardization logic
+│   └── aggregate_gold.sql             # Aggregation and business metrics
 │
 ├── docs/                              # Documentation deliverables
-│   ├── project_documentation.md
-│   └── data_dictionary.md
+│   ├── project_documentation.md       # Full project explanation
+│   └── data_dictionary.md             # Raw table field descriptions
 │
-|__ scripts/
-|   ├── full_refresh.py                # Complete annual reload
-|   ├── run_incremental.py             # Monthly incremental loader
-|   ├── pipeline_helpers.py            # Shared functions
+├── scripts/                           # Executable scripts for pipeline automation
+│   ├── full_refresh.py                # Full-year load (Raw → Silver → Gold)
+│   ├── run_incremental.py             # Incremental monthly load with metadata tracking
+│   └── pipeline_helpers.py            # Shared utilities (download, merge, DB ops, metadata)
 │
-├── requirements.txt                   # Dependencies
-├── .env                               # Environment variables
-├── README.md                          # You are here!
+├── requirements.txt                   # Python dependency list
+├── .env                               # Environment config (Postgres credentials, paths)
+├── .gitignore                         # Ignore data, env, caches, etc.
+├── README.md                          # GitHub overview (walkthrough & usage)
 └── A_flowchart_diagram_in_the_image_illustrates_a_SQL.png  # Architecture diagram
+
 ```
 
 ---

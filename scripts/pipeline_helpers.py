@@ -21,9 +21,9 @@ import psycopg2
 import io
 from typing import Optional, Tuple
 
-# -------------------------------------------------------------------------
+
 # CONFIG
-# -------------------------------------------------------------------------
+
 load_dotenv()
 YEAR = int(os.getenv("YEAR", "2024"))
 DATA_DIR = Path(os.getenv("DATA_DIR", "data"))
@@ -81,16 +81,16 @@ def run_sql_file(file_path: Path) -> None:
     """
     if not file_path.exists():
         raise FileNotFoundError(f"SQL file not found: {file_path}")
-    logger.info("📄 Running SQL: %s", file_path.name)
+    logger.info("Running SQL: %s", file_path.name)
     sql_text = file_path.read_text()
     try:
         with get_db_conn() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql_text)
             conn.commit()
-        logger.info("✅ Completed SQL: %s", file_path.name)
+        logger.info("Completed SQL: %s", file_path.name)
     except Exception as exc:
-        logger.error("❌ Error executing SQL %s: %s", file_path.name, exc, exc_info=True)
+        logger.error("Error executing SQL %s: %s", file_path.name, exc, exc_info=True)
         raise
 
 # -------------------------------------------------------------------------
@@ -105,17 +105,17 @@ def download_parquet(url: str, dest_path: Path, timeout: int = 60) -> bool:
         logger.debug("Parquet already exists: %s", dest_path)
         return True
     try:
-        logger.info("📥 Downloading %s", url)
+        logger.info("Downloading %s", url)
         dest_path.parent.mkdir(parents=True, exist_ok=True)
         with requests.get(url, stream=True, timeout=timeout) as r:
             r.raise_for_status()
             with open(dest_path, "wb") as fh:
                 for chunk in r.iter_content(chunk_size=8192):
                     fh.write(chunk)
-        logger.info("✅ Downloaded %s", dest_path.name)
+        logger.info("Downloaded %s", dest_path.name)
         return True
     except Exception as exc:
-        logger.error("❌ Download failed %s: %s", url, exc, exc_info=True)
+        logger.error("Download failed %s: %s", url, exc, exc_info=True)
         return False
 
 def merge_parquet_files_to_csv(output_csv_path: Path, year: int = YEAR) -> None:
@@ -124,10 +124,10 @@ def merge_parquet_files_to_csv(output_csv_path: Path, year: int = YEAR) -> None:
     Skips if output CSV already exists.
     """
     if output_csv_path.exists():
-        logger.info("✅ Combined CSV already exists: %s", output_csv_path.name)
+        logger.info("Combined CSV already exists: %s", output_csv_path.name)
         return
 
-    logger.info("🔗 Merging Parquet files into CSV: %s", output_csv_path)
+    logger.info("Merging Parquet files into CSV: %s", output_csv_path)
     output_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -136,19 +136,19 @@ def merge_parquet_files_to_csv(output_csv_path: Path, year: int = YEAR) -> None:
             for month in range(1, 13):
                 parquet_path = DATA_DIR / f"yellow_tripdata_{year}-{month:02}.parquet"
                 if not parquet_path.exists():
-                    logger.warning("⚠️ Missing parquet: %s - skipping", parquet_path.name)
+                    logger.warning("Missing parquet: %s - skipping", parquet_path.name)
                     continue
                 try:
                     table = pq.read_table(parquet_path)
                     pc.write_csv(table, out, write_options=pc.WriteOptions(include_header=first))
                     first = False
-                    logger.info("📦 Appended %s", parquet_path.name)
+                    logger.info("Appended %s", parquet_path.name)
                 except Exception as exc:
                     logger.error("❌ Failed to convert %s: %s", parquet_path.name, exc, exc_info=True)
                     continue
-        logger.info("✅ Combined CSV written: %s", output_csv_path.resolve())
+        logger.info("Combined CSV written: %s", output_csv_path.resolve())
     except Exception as exc:
-        logger.error("❌ Error merging parquet files: %s", exc, exc_info=True)
+        logger.error("Error merging parquet files: %s", exc, exc_info=True)
         raise
 
 # -------------------------------------------------------------------------
@@ -165,7 +165,7 @@ def get_csv_row_count(csv_path: Path) -> int:
             total = sum(1 for _ in fh)
             return max(total - 1, 0)
     except Exception as exc:
-        logger.warning("⚠️ Could not count CSV rows %s: %s", csv_path, exc, exc_info=True)
+        logger.warning("Could not count CSV rows %s: %s", csv_path, exc, exc_info=True)
         return 0
 
 def get_table_row_count(table_name: str) -> int:
@@ -178,7 +178,7 @@ def get_table_row_count(table_name: str) -> int:
                 cur.execute(f"SELECT COUNT(*) FROM {table_name};")
                 return int(cur.fetchone()[0] or 0)
     except Exception as exc:
-        logger.warning("⚠️ Could not count rows for %s: %s", table_name, exc, exc_info=True)
+        logger.warning("Could not count rows for %s: %s", table_name, exc, exc_info=True)
         return 0
 
 def get_raw_stats() -> Tuple[int, Optional[str]]:
@@ -192,7 +192,7 @@ def get_raw_stats() -> Tuple[int, Optional[str]]:
                 count, max_ts = cur.fetchone()
                 return int(count or 0), max_ts
     except Exception as exc:
-        logger.warning("⚠️ Could not fetch raw stats: %s", exc, exc_info=True)
+        logger.warning("Could not fetch raw stats: %s", exc, exc_info=True)
         return 0, None
 
 def get_silver_max_pickup() -> Optional[str]:
@@ -205,7 +205,7 @@ def get_silver_max_pickup() -> Optional[str]:
                 cur.execute(f"SELECT MAX(pickup_datetime) FROM {SILVER_TABLE};")
                 return cur.fetchone()[0]
     except Exception as exc:
-        logger.warning("⚠️ Could not fetch silver max pickup: %s", exc, exc_info=True)
+        logger.warning("Could not fetch silver max pickup: %s", exc, exc_info=True)
         return None
 
 # -------------------------------------------------------------------------
@@ -231,9 +231,9 @@ def ensure_pipeline_metadata_table():
             with conn.cursor() as cur:
                 cur.execute(sql)
             conn.commit()
-        logger.info("✅ Ensured pipeline metadata table exists.")
+        logger.info("Ensured pipeline metadata table exists.")
     except Exception as exc:
-        logger.error("❌ Could not ensure pipeline metadata table: %s", exc, exc_info=True)
+        logger.error("Could not ensure pipeline metadata table: %s", exc, exc_info=True)
         raise
 
 def get_last_loaded_month(pipeline_name: str = "nyc_taxi_2024") -> Optional[str]:
@@ -247,7 +247,7 @@ def get_last_loaded_month(pipeline_name: str = "nyc_taxi_2024") -> Optional[str]
                 row = cur.fetchone()
                 return row[0] if row else None
     except Exception as exc:
-        logger.warning("⚠️ Could not read pipeline metadata: %s", exc, exc_info=True)
+        logger.warning("Could not read pipeline metadata: %s", exc, exc_info=True)
         return None
 
 def update_last_loaded_month(month: str, pipeline_name: str = "nyc_taxi_2024"):
@@ -268,14 +268,14 @@ def update_last_loaded_month(month: str, pipeline_name: str = "nyc_taxi_2024"):
                     (pipeline_name, month)
                 )
             conn.commit()
-        logger.info("✅ pipeline metadata updated: %s -> %s", pipeline_name, month)
+        logger.info("pipeline metadata updated: %s -> %s", pipeline_name, month)
     except Exception as exc:
-        logger.error("❌ Could not update pipeline metadata: %s", exc, exc_info=True)
+        logger.error("Could not update pipeline metadata: %s", exc, exc_info=True)
         raise
 
-# -------------------------------------------------------------------------
+
 # In-memory Parquet -> CSV -> COPY loader (no on-disk CSV)
-# -------------------------------------------------------------------------
+
 def load_parquet_month_to_raw_inmemory(parquet_path: Path, table_name: str = RAW_TABLE) -> None:
     """
     Convert a Parquet file to CSV in-memory and COPY into Postgres via copy_expert.
@@ -286,7 +286,7 @@ def load_parquet_month_to_raw_inmemory(parquet_path: Path, table_name: str = RAW
     if not parquet_path.exists():
         raise FileNotFoundError(f"Parquet file not found: {parquet_path}")
 
-    logger.info("🔁 Streaming Parquet -> CSV (in-memory) for %s", parquet_path.name)
+    logger.info("Streaming Parquet -> CSV (in-memory) for %s", parquet_path.name)
 
     try:
         # Read parquet into Arrow Table
@@ -324,9 +324,9 @@ def load_parquet_month_to_raw_inmemory(parquet_path: Path, table_name: str = RAW
         except Exception:
             pass
 
-# -------------------------------------------------------------------------
+
 # Convenience: compute month string helper
-# -------------------------------------------------------------------------
+
 def month_to_filename(year: int, month: int) -> str:
     """Return the standardized parquet file name for a year/month."""
     return f"yellow_tripdata_{year}-{month:02}.parquet"

@@ -55,7 +55,7 @@ def run_incremental_one_month(delete_parquet_after: bool = False):
       - run transform_silver.sql and aggregate_gold.sql
       - update pipeline_metadata
     """
-    logger.info("🚀 Starting incremental load (one month)")
+    logger.info("Starting incremental load (one month)")
 
     ensure_pipeline_metadata_table()
 
@@ -89,14 +89,14 @@ def run_incremental_one_month(delete_parquet_after: bool = False):
 
     # run silver transform and gold aggregation (they should handle incremental upsert logic)
     try:
-        logger.info("⚙️ Running transform_silver.sql (incremental step)")
+        logger.info("Running transform_silver.sql (incremental step)")
         run_sql_file(SQL_DIR / "transform_silver.sql")
     except Exception as exc:
         logger.error("Transform to silver failed for %s: %s", next_month, exc, exc_info=True)
         raise
 
     try:
-        logger.info("💰 Running aggregate_gold.sql (incremental step)")
+        logger.info("Running aggregate_gold.sql (incremental step)")
         run_sql_file(SQL_DIR / "aggregate_gold.sql")
     except Exception as exc:
         logger.error("Aggregate to gold failed for %s: %s", next_month, exc, exc_info=True)
@@ -117,7 +117,7 @@ def run_incremental_one_month(delete_parquet_after: bool = False):
         except Exception as exc:
             logger.warning("Could not delete parquet %s: %s", parquet_path, exc, exc_info=True)
 
-    logger.info("✅ Incremental load complete for %s", next_month)
+    logger.info("Incremental load complete for %s", next_month)
 
 
 if __name__ == "__main__":
@@ -125,5 +125,5 @@ if __name__ == "__main__":
         # set True if you want to remove parquet after load
         run_incremental_one_month(delete_parquet_after=False)
     except Exception as exc:
-        logger.error("❌ Incremental pipeline failed: %s", exc, exc_info=True)
+        logger.error("Incremental pipeline failed: %s", exc, exc_info=True)
         raise
