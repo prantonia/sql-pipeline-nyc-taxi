@@ -5,19 +5,26 @@ The pipeline supports both **full-refresh** and **incremental** data loads, and 
 
 ---
 
+Excellent — that’s a great start 👏
+
+Here’s a **beautified and GitHub-optimized version** of your **Table of Contents**, formatted for clarity, consistent indentation, and clickable Markdown links that work perfectly on GitHub or VS Code preview:
+
+---
+
 ## Table of Contents
 
-1. [Project Overview](#-project-overview)  
-2. [Folder Structure](#-folder-structure)  
-3. [Environment Setup](#-environment-setup)  
-4. [Design Rationale](#-design-rationale)  
-5. [Pipeline Flow](#-pipeline-flow)  
-6. [Full Refresh Process](#-full-refresh-process)  
-7. [Incremental Load Process](#-incremental-load-process)  
-8. [Metadata Management](#-metadata-management)  
-9. [SQL Layers Explained](#-sql-layers-explained)  
-10. [Example Analytical Queries](#-example-analytical-queries)  
-11. [Key Learnings & Next Steps](#-key-learnings--next-steps)
+1. [Project Overview](#project-overview)  
+2. [Folder Structure](#folder-structure)  
+3. [Environment Setup](#environment-setup)  
+4. [Design Rationale](#design-rationale)  
+5. [Pipeline Flow](#pipeline-flow)  
+6. [Full Refresh Process](#full-refresh-process)  
+7. [Incremental Load Process](#incremental-load-process)  
+8. [Metadata Management](#metadata-management)  
+9. [SQL Layers Explained](#sql-layers-explained)  
+10. [Example Analytical Queries](#example-analytical-queries)  
+11. [Key Learnings & Next Steps](#key-learnings--next-steps)
+
 
 ---
 
@@ -59,7 +66,7 @@ sql_pipeline/
 ├── .env                               # Environment config (Postgres credentials, paths)
 ├── .gitignore                         # Ignore data, env, caches, etc.
 ├── README.md                          # GitHub overview (walkthrough & usage)
-└── A_flowchart_diagram_in_the_image_illustrates_a_SQL.png  # Architecture diagram
+└── ELT                                # Architecture diagram
 
 ```
 
@@ -166,7 +173,7 @@ Used for initial or complete rebuild of the pipeline.
 
 ### Run Command
 ```bash
-python full_refresh.py
+python scripts/full_refresh.py
 ```
 
 ### Expected Log Output
@@ -194,7 +201,7 @@ Used for adding new data month-by-month.
 
 ### Run Command
 ```bash
-python run_incremental.py
+python scripts/run_incremental.py
 ```
 
 ### Example Log
