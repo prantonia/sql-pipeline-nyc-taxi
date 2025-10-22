@@ -1,6 +1,51 @@
+# NYC Taxi Data Pipeline (.gitignore)
+
+# ---- Environment & Secrets ----
 .env
+.env.*
+*.env
+
+# ---- Local Data Files ----
 data/
+*.parquet
+*.csv
+*.log
+*.tmp
+*.zip
+
+
+
+# ---- System Files ----
+.DS_Store
+Thumbs.db
+
+
+
+# ---- Virtual Environments ----
+.venv/
+
+
+# ---- Python Cache & Build Artifacts ----
 __pycache__/
 *.pyc
-.DS_Store
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+*.egg
+build/
+dist/
 
+
+# ---- IDE / Editor Settings ----
+.vscode/
+.idea/
+*.swp
+
+
+# ---- Misc ----
+*.bak
+*.old
+*.orig
+logs/
