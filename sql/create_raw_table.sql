@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS raw_taxi_data_2024 (
+    vendor_id TEXT,
+    tpep_pickup_datetime TIMESTAMP,
+    tpep_dropoff_datetime TIMESTAMP,
+    passenger_count INTEGER,
+    trip_distance FLOAT,
+    ratecode_id INTEGER,
+    store_and_fwd_flag TEXT,
+    pu_location_id INTEGER,
+    do_location_id INTEGER,
+    payment_type INTEGER,
+    fare_amount FLOAT,
+    extra FLOAT,
+    mta_tax FLOAT,
+    tip_amount FLOAT,
+    tolls_amount FLOAT,
+    improvement_surcharge FLOAT,
+    total_amount FLOAT,
+    congestion_surcharge FLOAT,
+    airport_fee FLOAT
+);
