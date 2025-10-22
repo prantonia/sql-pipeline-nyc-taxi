@@ -23,8 +23,3 @@
 | `airport_fee` | FLOAT | Additional fee for trips originating/ending at an airport (e.g., JFK or LaGuardia). |
 
 ---
-
-## Notes
-- This schema aligns with the **NYC Taxi & Limousine Commission (TLC)** official trip record layout.  
-- Columns like `pu_location_id` and `do_location_id` can be **joined** to the **TLC Taxi Zone Lookup Table** for geographic context (borough, zone name, service zone).  
-- Timestamps (`tpep_pickup_datetime`, `tpep_dropoff_datetime`) are crucial for deriving metrics such as trip duration, time-of-day analysis, and monthly aggregations.
