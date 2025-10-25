@@ -19,7 +19,7 @@ from pathlib import Path
 from datetime import datetime
 from pipeline_helpers import (
     DATA_DIR, YEAR, SQL_DIR,
-    download_parquet, month_to_filename,
+    download_parquet, month_to_filename, ensure_raw_table_schema,
     ensure_pipeline_metadata_table, get_last_loaded_month, update_last_loaded_month,
     load_parquet_month_to_raw_inmemory, run_sql_file,
 )
@@ -57,6 +57,7 @@ def run_incremental_one_month(delete_parquet_after: bool = False):
     """
     logger.info("Starting incremental load (one month)")
 
+    ensure_raw_table_schema()
     ensure_pipeline_metadata_table()
 
     last_loaded = get_last_loaded_month()

@@ -44,7 +44,7 @@ GOLD_TABLE = os.getenv("GOLD_TABLE")
 PIPELINE_METADATA = os.getenv("PIPELINE_METADATA")
 
 # Whether to delete monthly parquet after successful load to save disk
-DELETE_PARQUET_AFTER_LOAD = os.getenv("DELETE_PARQUET_AFTER_LOAD", "false").lower() in ("1", "true", "yes")
+#DELETE_PARQUET_AFTER_LOAD = os.getenv("DELETE_PARQUET_AFTER_LOAD", "false").lower() in ("1", "true", "yes")
 
 
 # LOGGING
@@ -91,6 +91,24 @@ def run_sql_file(file_path: Path) -> None:
         logger.info("Completed SQL: %s", file_path.name)
     except Exception as exc:
         logger.error("Error executing SQL %s: %s", file_path.name, exc, exc_info=True)
+        raise
+
+# raw table schema
+def ensure_raw_table_schema():
+    """
+    Ensures the RAW table exists with a unique constraint to prevent duplicates.
+    """
+    create_sql = (SQL_DIR / "create_raw_table.sql").read_text()
+    
+    try:
+        with get_db_conn() as conn:
+            with conn.cursor() as cur:
+                # Create table if missing
+                cur.execute(create_sql)
+            conn.commit()
+        logger.info("Ensured raw table exist.")
+    except Exception as exc:
+        logger.error("Failed ensuring raw table schema: %s", exc, exc_info=True)
         raise
 
 

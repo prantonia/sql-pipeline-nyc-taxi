@@ -13,7 +13,8 @@ data/
 *.tmp
 *.zip
 
-
+scripts/helper_functions.py
+scripts/incremental.py
 
 # ---- System Files ----
 .DS_Store
