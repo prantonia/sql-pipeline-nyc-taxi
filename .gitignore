@@ -15,10 +15,16 @@ data/
 
 scripts/helper_functions.py
 scripts/incremental.py
+scripts/help.py
+scripts/run.py
 
 # ---- System Files ----
 .DS_Store
 Thumbs.db
+
+assets/
+*.svg
+*.png
 
 
 
